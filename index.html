@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全学段数学计算器</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+        <div class="nav-container">
+            <div class="header-left">
+                <h2>计算器</h2>
+                <div class="header-meta">
+                    <span id="mode-badge" class="mode-badge">模式: <strong>科学</strong></span>
+                    <button id="angle-toggle" class="btn small">角度: 弧度</button>
+                    <button id="theme-toggle" class="btn small">深色模式</button>
+                </div>
+            </div>
+            <div class="nav-buttons">
+                <button id="mode-toggle" class="btn small">切换模式</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+
+        <!-- 左侧学段 / 功能快捷栏 (桌面端) -->
+        <aside class="sidebar desktop-only">
+            <h3>学段</h3>
+            <ul class="subject-list">
+                <li><button data-subject="primary">小学</button></li>
+                <li><button data-subject="junior">初中</button></li>
+                <li><button data-subject="senior">高中</button></li>
+                <li><button data-subject="university">大学</button></li>
+            </ul>
+            <h3>功能</h3>
+            <ul class="function-list">
+                <li><button id="history-btn">历史</button></li>
+                <li><button id="favorites-btn">收藏</button></li>
+                <li><button id="tools-btn">工具</button></li>
+                <li><button id="symbols-btn">符号参考</button></li>
+            </ul>
+        </aside>
+
+        <!-- 中间核心计算区 -->
+        <section class="calculator-area">
+            <!-- 学段切换标签 (移动端) -->
+            <div class="mobile-subject-switcher">
+                <select id="mobile-subject-select">
+                    <option value="primary">小学</option>
+                    <option value="junior">初中</option>
+                    <option value="senior">高中</option>
+                    <option value="university">大学</option>
+                </select>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="input-section">
+                <label for="expression-input">输入表达式:</label>
+                <textarea id="expression-input" placeholder="例如: 2 + 3 * (4 - 1)"></textarea>
+                <div class="input-actions">
+                    <button id="calculate-btn">计算</button>
+                    <button id="clear-btn">清除</button>
+                </div>
+            </div>
+
+            <!-- 结果区域 -->
+            <div class="result-section">
+                <h3>计算结果</h3>
+                <div id="result-display">请输入表达式并点击计算</div>
+                <button id="toggle-steps-btn" class="small-btn" style="display:none; margin-top:0.5rem;">查看步骤</button>
+                <div id="steps-display" class="steps"></div>
+            </div>
+
+            <!-- 移动端历史与收藏视图 -->
+            <div id="mobile-history-view" class="mobile-only tab-view" style="display:none; margin-top:1rem;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <h3>历史记录</h3>
+                    <button id="mobile-clear-history-btn" class="small-btn">清空</button>
+                </div>
+                <ul id="mobile-history-list" class="history-list"></ul>
+            </div>
+
+            <div id="mobile-favorites-view" class="mobile-only tab-view" style="display:none; margin-top:1rem;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <h3>收藏夹</h3>
+                    <button id="mobile-clear-favorites-btn" class="small-btn">清空</button>
+                </div>
+                <ul id="mobile-favorites-list" class="favorites-list"></ul>
+            </div>
+
+            <!-- 公式编辑器 (可选) -->
+            <div class="formula-editor">
+                <h3>公式编辑器</h3>
+                <div class="symbols-toolbar">
+                    <!-- 示例符号 -->
+                    <span class="symbol" data-value="+" title="加号">+</span>
+                    <span class="symbol" data-value="-" title="减号">-</span>
+                    <span class="symbol" data-value="*" title="乘号">×</span>
+                    <span class="symbol" data-value="/" title="除号">÷</span>
+                    <span class="symbol" data-value="(" title="左括号">(</span>
+                    <span class="symbol" data-value=")" title="右括号">)</span>
+                    <span class="symbol" data-value="^" title="幂">^</span>
+                    <span class="symbol" data-value="²" title="平方">²</span>
+                    <span class="symbol" data-value="³" title="立方">³</span>
+                    <span class="symbol" data-value="ⁿ" title="任意次方">ⁿ</span>
+                    <span class="symbol" data-value="√" title="平方根">√</span>
+                    <span class="symbol" data-value="∛" title="立方根">∛</span>
+                    <span class="symbol" data-value="±" title="正负">±</span>
+                    <span class="symbol" data-value="·" title="代数乘">·</span>
+                    <span class="symbol" data-value="≥" title="大于等于">≥</span>
+                    <span class="symbol" data-value="≤" title="小于等于">≤</span>
+                    <span class="symbol" data-value="≠" title="不等于">≠</span>
+                    <span class="symbol" data-value="sin(" title="正弦">sin( )</span>
+                    <span class="symbol" data-value="cos(" title="余弦">cos( )</span>
+                    <span class="symbol" data-value="tan(" title="正切">tan( )</span>
+                    <!-- 更多符号... -->
+                </div>
+                <div class="editor-placeholder">点击上方符号插入到输入框</div>
+            </div>
+
+            <!-- 虚拟键盘 (移动端) -->
+            <div id="virtual-keyboard" class="virtual-keyboard mobile-only">
+                <!-- 虚拟键盘布局会由 JavaScript 动态生成 -->
+            </div>
+
+        </section>
+
+        <!-- 右侧历史 / 收藏栏 (桌面端) -->
+        <aside class="sidebar right-sidebar desktop-only">
+            <div class="sidebar-section">
+                <h3>历史记录 <button id="clear-history-btn" class="small-btn">清空</button></h3>
+                <ul id="history-list" class="history-list"></ul>
+            </div>
+            <div class="sidebar-section" style="margin-top:1rem;">
+                <h3>收藏夹 <button id="clear-favorites-btn" class="small-btn">清空</button></h3>
+                <ul id="favorites-list" class="favorites-list"></ul>
+            </div>
+        </aside>
+
+        <!-- 底部功能 Tab 栏 (移动端) -->
+        <footer class="bottom-tabbar mobile-only">
+            <button class="tab-btn active" data-tab="calculator">计算</button>
+            <button class="tab-btn" data-tab="history">历史</button>
+            <button class="tab-btn" data-tab="favorites">收藏</button>
+            <button class="tab-btn" data-tab="tools">工具</button>
+        </footer>
+
+    </main>
+
+    <!-- 符号参考模态框 -->
+    <div id="symbols-modal" class="modal" aria-hidden="true" style="display:none;">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content card">
+            <header class="modal-header">
+                <h3>符号参考</h3>
+                <button id="symbols-close" class="small-btn">关闭</button>
+            </header>
+            <div class="modal-body" id="symbols-body">
+                <!-- 符号内容由 JavaScript 从 data/symbols.json 加载 -->
+                <p style="color:var(--gray-600); font-size:14px; margin:0;">加载中…</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 math.js（优先使用本地副本以避免浏览器追踪拦截） -->
+    <script src="js/vendor/math.min.js"></script>
+    <script>
+        // 如果本地脚本未能定义 math（极少见），再尝试从网络 CDN 加载
+        (function(){
+            if (typeof math === 'undefined') {
+                var s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/mathjs@11.7.0/lib/browser/math.js';
+                s.onload = function(){ console.log('math.js loaded from network fallback'); };
+                s.onerror = function(){ console.warn('无法加载 math.js（网络备用）'); };
+                document.head.appendChild(s);
+            }
+        })();
+    </script>
+    <!-- 你的 JavaScript 文件 -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/calculator.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
